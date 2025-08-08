@@ -2,6 +2,7 @@ package com.pokertrainer.navigation
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
+    object Dashboard : Screen("dashboard")
     object Schedule : Screen("schedule")
     object Stats : Screen("stats")
     object Training : Screen("training")

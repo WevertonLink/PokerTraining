@@ -19,9 +19,12 @@ import com.pokertrainer.navigation.Screen
 import com.pokertrainer.ui.theme.Tokens
 import com.pokertrainer.ui.theme.colorFromHex
 
+import androidx.compose.material.icons.filled.Dashboard
+
 @Composable
 fun BottomPillBar(currentRoute: String?, navController: NavController) {
     val items = listOf(
+        Screen.Dashboard to Icons.Default.Dashboard,
         Screen.Home to Icons.Default.Home,
         Screen.Schedule to Icons.Default.CalendarToday,
         Screen.Gamification to Icons.Default.EmojiEvents
@@ -59,8 +62,11 @@ fun BottomPillBar(currentRoute: String?, navController: NavController) {
                         )
                         Text(
                             text = when (screen) {
+                                Screen.Dashboard -> "Dashboard"
                                 Screen.Home -> "Início"
-                                else -> "Agenda"
+                                Screen.Schedule -> "Agenda"
+                                Screen.Gamification -> "Ranking"
+                                else -> "Menu"
                             },
                             color = if (selected) colorFromHex(Tokens.Primary) else Color.White,
                             fontSize = Tokens.Caption

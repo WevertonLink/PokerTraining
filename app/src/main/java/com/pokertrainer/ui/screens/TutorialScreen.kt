@@ -621,6 +621,7 @@ private fun HintCard(
                 HintPriority.HIGH -> colorFromHex(Tokens.Warning).copy(alpha = 0.1f)
                 HintPriority.MEDIUM -> colorFromHex(Tokens.Primary).copy(alpha = 0.1f)
                 HintPriority.LOW -> colorFromHex(Tokens.SurfaceElevated)
+                else -> colorFromHex(Tokens.SurfaceElevated)
             }
         ),
         elevation = CardDefaults.cardElevation(4.dp),

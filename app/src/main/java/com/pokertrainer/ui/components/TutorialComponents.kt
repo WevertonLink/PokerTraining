@@ -207,6 +207,7 @@ fun ContextualHint(
         HintPriority.MEDIUM -> colorFromHex(Tokens.Primary)
         HintPriority.HIGH -> colorFromHex(Tokens.Warning)
         HintPriority.CRITICAL -> colorFromHex(Tokens.Error)
+        else -> colorFromHex(Tokens.Primary)
     }
     
     AnimatedVisibility(
@@ -245,6 +246,7 @@ fun ContextualHint(
                         HintPriority.MEDIUM -> Icons.Default.Lightbulb
                         HintPriority.HIGH -> Icons.Default.Warning
                         HintPriority.CRITICAL -> Icons.Default.Error
+                        else -> Icons.Default.Lightbulb
                     },
                     contentDescription = null,
                     tint = hintColor,
@@ -306,7 +308,7 @@ fun ContextualHint(
 
 @Composable
 fun InteractiveTutorialOverlay(
-    step: TutorialStep,
+    step: TutorialStepData,
     isVisible: Boolean,
     onNext: () -> Unit,
     onPrevious: () -> Unit,
@@ -324,11 +326,9 @@ fun InteractiveTutorialOverlay(
                 .background(Color.Black.copy(alpha = 0.7f))
         ) {
             // Highlight target element (simplified implementation)
-            step.targetElement?.let { targetId ->
-                HighlightCircle(
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
+            HighlightCircle(
+                modifier = Modifier.align(Alignment.Center)
+            )
             
             // Tutorial content
             TutorialStepCard(
@@ -363,7 +363,7 @@ private fun HighlightCircle(modifier: Modifier = Modifier) {
 
 @Composable
 private fun TutorialStepCard(
-    step: TutorialStep,
+    step: TutorialStepData,
     onNext: () -> Unit,
     onPrevious: () -> Unit,
     onSkip: () -> Unit,
@@ -390,7 +390,7 @@ private fun TutorialStepCard(
             Spacer(modifier = Modifier.height(8.dp))
             
             Text(
-                text = step.instruction,
+                text = step.content,
                 style = MaterialTheme.typography.bodyMedium,
                 color = colorFromHex(Tokens.Neutral)
             )

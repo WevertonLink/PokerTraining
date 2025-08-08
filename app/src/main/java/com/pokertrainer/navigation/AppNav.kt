@@ -26,7 +26,7 @@ fun PokerTrainerApp() {
     val currentRoute = navBackStackEntry?.destination?.route
 
     // Verifica se está em uma tela que deve mostrar a bottom bar
-    val showBottomBar = currentRoute in listOf(Screen.Home.route, Screen.Schedule.route)
+    val showBottomBar = currentRoute in listOf(Screen.Dashboard.route, Screen.Home.route, Screen.Schedule.route)
 
     Scaffold(
         bottomBar = {
@@ -37,9 +37,28 @@ fun PokerTrainerApp() {
     ) { padding ->
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Screen.Dashboard.route,
             modifier = Modifier.padding(padding)
         ) {
+            composable(Screen.Dashboard.route) {
+                DashboardScreen(
+                    onNavigateToNotifications = {
+                        navController.navigate(Screen.Notifications.route)
+                    },
+                    onNavigateToTutorials = {
+                        navController.navigate(Screen.Tutorials.route)
+                    },
+                    onNavigateToPractice = {
+                        navController.navigate(Screen.PracticeHome.route)
+                    },
+                    onNavigateToStats = {
+                        navController.navigate(Screen.Stats.route)
+                    },
+                    onNavigateToAnalysis = {
+                        navController.navigate(Screen.PerformanceAnalysis.route)
+                    }
+                )
+            }
             composable(Screen.Home.route) {
                 HomeScreen(
                     user = SampleData.user,
