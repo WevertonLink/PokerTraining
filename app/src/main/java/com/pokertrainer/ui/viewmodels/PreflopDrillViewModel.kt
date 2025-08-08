@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 class PreflopDrillViewModel(
     private val drillId: Int,
     private val generateDrillUseCase: GenerateDrillUseCase = GenerateDrillUseCase(TrainingRepositoryImpl()),
-    private val evaluateDecisionUseCase: EvaluateDecisionUseCase = EvaluateDecisionUseCase()
+    private val evaluateDecisionUseCase: EvaluateDecisionUseCase = EvaluateDecisionUseCase(TrainingRepositoryImpl())
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(PreflopDrillUiState())

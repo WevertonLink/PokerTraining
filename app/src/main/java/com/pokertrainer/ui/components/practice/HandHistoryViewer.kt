@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -56,14 +55,14 @@ fun HandHistoryViewer(
         ) {
             // Header com informações da mão
             HandHistoryHeader(handHistory)
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Ações da mão por street
             HandHistoryStreets(handHistory)
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Resultado
             HandResult(handHistory.result)
         }
@@ -90,7 +89,7 @@ private fun HandHistoryHeader(handHistory: HandHistory) {
                 color = colorFromHex(Tokens.Neutral)
             )
         }
-        
+
         Column(horizontalAlignment = Alignment.End) {
             Text(
                 text = "Hero: ${handHistory.heroPosition}",
@@ -120,7 +119,7 @@ private fun HandHistoryStreets(handHistory: HandHistory) {
                 actions = handHistory.preflopActions
             )
         }
-        
+
         // Flop
         handHistory.flopCards?.let { flopCards ->
             item {
@@ -131,7 +130,7 @@ private fun HandHistoryStreets(handHistory: HandHistory) {
                 )
             }
         }
-        
+
         // Turn
         handHistory.turnCard?.let { turnCard ->
             item {
@@ -142,7 +141,7 @@ private fun HandHistoryStreets(handHistory: HandHistory) {
                 )
             }
         }
-        
+
         // River
         handHistory.riverCard?.let { riverCard ->
             item {
@@ -173,7 +172,7 @@ private fun StreetSection(
                 fontWeight = FontWeight.Bold,
                 color = colorFromHex(Tokens.Primary)
             )
-            
+
             boardCards?.let { cards ->
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
@@ -190,9 +189,9 @@ private fun StreetSection(
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
+
         // Actions
         actions.forEach { action ->
             ActionRow(action)
@@ -222,7 +221,7 @@ private fun ActionRow(action: HandAction) {
                 modifier = Modifier.width(80.dp)
             )
         }
-        
+
         Row {
             Text(
                 text = action.action,
@@ -235,10 +234,10 @@ private fun ActionRow(action: HandAction) {
                     else -> Color.White
                 }
             )
-            
+
             action.amount?.let { amount ->
                 Text(
-                    text = " $${amount}",
+                    text = " $$amount",
                     fontSize = 12.sp,
                     color = Color.White,
                     fontWeight = FontWeight.Bold

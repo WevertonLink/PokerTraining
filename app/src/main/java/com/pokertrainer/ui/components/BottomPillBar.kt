@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.pokertrainer.navigation.Screen
@@ -25,7 +24,7 @@ fun BottomPillBar(currentRoute: String?, navController: NavController) {
         Screen.Home to Icons.Default.Home,
         Screen.Schedule to Icons.Default.CalendarToday
     )
-    
+
     Card(
         modifier = Modifier
             .padding(16.dp)
@@ -57,7 +56,7 @@ fun BottomPillBar(currentRoute: String?, navController: NavController) {
                             tint = if (selected) colorFromHex(Tokens.Primary) else Color.White
                         )
                         Text(
-                            text = when(screen) {
+                            text = when (screen) {
                                 Screen.Home -> "Início"
                                 else -> "Agenda"
                             },

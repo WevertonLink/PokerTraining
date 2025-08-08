@@ -21,7 +21,7 @@ fun ActionPills(
         "Revisão" to onReviewClick,
         "Scanner de Mãos" to onScannerClick
     )
-    
+
     Row(
         modifier = Modifier
             .fillMaxWidth()

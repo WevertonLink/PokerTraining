@@ -5,38 +5,38 @@ import com.pokertrainer.domain.models.*
 import kotlinx.coroutines.delay
 
 class TrainingRepositoryImpl : TrainingRepository {
-    
+
     private val drills = mutableListOf<TrainingDrill>().apply {
         addAll(SampleData.preflopDrills)
     }
-    
+
     private val sessions = mutableListOf<TrainingSession>()
-    
+
     override suspend fun getDrillById(drillId: Int): TrainingDrill? {
         delay(100) // Simula operação assíncrona
         return drills.find { it.id == drillId }
     }
-    
+
     override suspend fun getAllDrills(): List<TrainingDrill> {
         delay(100)
         return drills.toList()
     }
-    
+
     override suspend fun getDrillsByCategory(category: DrillCategory): List<TrainingDrill> {
         delay(100)
         return drills.filter { it.category == category }
     }
-    
+
     override suspend fun saveTrainingSession(session: TrainingSession) {
         delay(100)
         sessions.add(session)
     }
-    
+
     override suspend fun getTrainingHistory(): List<TrainingSession> {
         delay(100)
         return sessions.toList()
     }
-    
+
     override suspend fun updateDrillProgress(drillId: Int, completed: Boolean) {
         delay(100)
         val index = drills.indexOfFirst { it.id == drillId }
@@ -44,7 +44,7 @@ class TrainingRepositoryImpl : TrainingRepository {
             drills[index] = drills[index].copy(completed = completed)
         }
     }
-    
+
     override fun getStandardRange(position: Position, action: ActionType): List<String> {
         return when (position) {
             Position.UTG -> when (action) {

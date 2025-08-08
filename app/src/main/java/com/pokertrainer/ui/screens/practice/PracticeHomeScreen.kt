@@ -41,25 +41,25 @@ fun PracticeHomeScreen(
             .padding(horizontal = Tokens.ScreenPad)
     ) {
         TopGreetingBar(userName)
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Estatísticas rápidas
         QuickStatsSection()
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Categorias de drill
         SectionHeader("Categorias de Treino")
         Spacer(modifier = Modifier.height(12.dp))
         DrillCategoriesGrid(onCategoryClick)
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Treinos Avançados
         SectionHeader("Treinos Avançados")
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         // Treino pós-flop
         ActionCard(
             title = "Simulação Pós-flop",
@@ -67,9 +67,9 @@ fun PracticeHomeScreen(
             description = "Tome decisões em situações complexas de flop, turn e river",
             onStart = { onPostflopStart(java.util.UUID.randomUUID().toString()) }
         )
-        
+
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         // Leitura de mãos
         ActionCard(
             title = "Leitura de Mãos",
@@ -77,9 +77,9 @@ fun PracticeHomeScreen(
             description = "Desenvolva sua habilidade de identificar ranges oponentes",
             onStart = onHandReadingStart
         )
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         // Drills recomendados
         SectionHeader("Drills Recomendados")
         Spacer(modifier = Modifier.height(12.dp))
@@ -147,7 +147,7 @@ private fun QuickStatCard(
                 tint = color,
                 modifier = Modifier.size(20.dp)
             )
-            
+
             Column {
                 Text(
                     text = value,
@@ -173,7 +173,7 @@ private fun DrillCategoriesGrid(onCategoryClick: (DrillCategory) -> Unit) {
         Pair(DrillCategory.HAND_READING, Icons.Default.EmojiEvents),
         Pair(DrillCategory.BANKROLL_MANAGEMENT, Icons.Default.AttachMoney)
     )
-    
+
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -190,7 +190,7 @@ private fun DrillCategoriesGrid(onCategoryClick: (DrillCategory) -> Unit) {
                         modifier = Modifier.weight(1f)
                     )
                 }
-                
+
                 // Se só há uma categoria na linha, adiciona um espaço
                 if (rowCategories.size == 1) {
                     Spacer(modifier = Modifier.weight(1f))
@@ -213,14 +213,14 @@ private fun DrillCategoryCard(
         DrillCategory.HAND_READING -> "Hand Reading"
         DrillCategory.BANKROLL_MANAGEMENT -> "Bankroll"
     }
-    
+
     val categoryColor = when (category) {
         DrillCategory.PREFLOP -> Tokens.Primary
         DrillCategory.POSTFLOP -> Tokens.Positive
         DrillCategory.HAND_READING -> "#FFB800"
         DrillCategory.BANKROLL_MANAGEMENT -> Tokens.Negative
     }
-    
+
     Card(
         modifier = modifier
             .height(100.dp)
@@ -243,9 +243,9 @@ private fun DrillCategoryCard(
                 tint = colorFromHex(categoryColor),
                 modifier = Modifier.size(32.dp)
             )
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = categoryName,
                 fontSize = 12.sp,
@@ -302,22 +302,22 @@ private fun DrillCard(
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
-                    
+
                     Spacer(modifier = Modifier.height(4.dp))
-                    
+
                     Text(
                         text = drill.description,
                         fontSize = 12.sp,
                         color = colorFromHex(Tokens.Neutral)
                     )
                 }
-                
+
                 Column(horizontalAlignment = Alignment.End) {
                     // Estrelas de dificuldade
                     DifficultyStars(difficulty = drill.difficulty)
-                    
+
                     Spacer(modifier = Modifier.height(4.dp))
-                    
+
                     // Status de conclusão
                     if (drill.completed) {
                         Icon(
@@ -329,9 +329,9 @@ private fun DrillCard(
                     }
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -351,7 +351,7 @@ private fun DrillCard(
                         color = colorFromHex(Tokens.Neutral)
                     )
                 }
-                
+
                 Text(
                     text = drill.category.name.lowercase().replaceFirstChar { it.uppercase() },
                     fontSize = 10.sp,
@@ -375,7 +375,13 @@ private fun DifficultyStars(difficulty: Int) {
             Icon(
                 imageVector = if (index < difficulty) Icons.Default.Star else Icons.Default.StarBorder,
                 contentDescription = "Estrela ${index + 1}",
-                tint = if (index < difficulty) colorFromHex("#FFB800") else colorFromHex(Tokens.Neutral),
+                tint = if (index < difficulty) {
+                    colorFromHex("#FFB800")
+                } else {
+                    colorFromHex(
+                        Tokens.Neutral
+                    )
+                },
                 modifier = Modifier.size(12.dp)
             )
         }
@@ -408,9 +414,9 @@ private fun ActionCard(
                 tint = colorFromHex(Tokens.Primary),
                 modifier = Modifier.size(48.dp)
             )
-            
+
             Spacer(modifier = Modifier.width(16.dp))
-            
+
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -418,16 +424,16 @@ private fun ActionCard(
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
-                
+
                 Spacer(modifier = Modifier.height(4.dp))
-                
+
                 Text(
                     text = description,
                     fontSize = 12.sp,
                     color = colorFromHex(Tokens.Neutral)
                 )
             }
-            
+
             Icon(
                 imageVector = Icons.Default.ArrowForward,
                 contentDescription = "Iniciar",

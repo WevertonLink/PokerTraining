@@ -4,21 +4,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.NavType
 import com.pokertrainer.data.SampleData
 import com.pokertrainer.ui.components.BottomPillBar
 import com.pokertrainer.ui.screens.*
+import com.pokertrainer.ui.screens.practice.HandReadingScreen
+import com.pokertrainer.ui.screens.practice.PostflopDrillScreen
 import com.pokertrainer.ui.screens.practice.PracticeHomeScreen
 import com.pokertrainer.ui.screens.practice.PreflopDrillScreen
-import com.pokertrainer.ui.screens.practice.PostflopDrillScreen
-import com.pokertrainer.ui.screens.practice.HandReadingScreen
-import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,14 +24,14 @@ fun PokerTrainerApp() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
-    
+
     // Verifica se está em uma tela que deve mostrar a bottom bar
     val showBottomBar = currentRoute in listOf(Screen.Home.route, Screen.Schedule.route)
-    
+
     Scaffold(
-        bottomBar = { 
+        bottomBar = {
             if (showBottomBar) {
-                BottomPillBar(currentRoute, navController) 
+                BottomPillBar(currentRoute, navController)
             }
         }
     ) { padding ->
@@ -70,7 +68,7 @@ fun PokerTrainerApp() {
                     }
                 )
             }
-            
+
             // Novas telas de prática
             composable(Screen.PracticeHome.route) {
                 PracticeHomeScreen(
@@ -88,7 +86,7 @@ fun PokerTrainerApp() {
                     }
                 )
             }
-            
+
             composable(
                 route = Screen.PreflopDrill.route,
                 arguments = listOf(
@@ -96,7 +94,7 @@ fun PokerTrainerApp() {
                 )
             ) { backStackEntry ->
                 val drillId = backStackEntry.arguments?.getInt("drillId") ?: 1
-                
+
                 PreflopDrillScreen(
                     drillId = drillId,
                     onBackClick = {
@@ -107,7 +105,7 @@ fun PokerTrainerApp() {
                     }
                 )
             }
-            
+
             composable(
                 route = Screen.PostflopDrill.route,
                 arguments = listOf(
@@ -115,7 +113,7 @@ fun PokerTrainerApp() {
                 )
             ) { backStackEntry ->
                 val sessionId = backStackEntry.arguments?.getString("sessionId") ?: ""
-                
+
                 PostflopDrillScreen(
                     sessionId = sessionId,
                     onBackClick = {
@@ -126,7 +124,7 @@ fun PokerTrainerApp() {
                     }
                 )
             }
-            
+
             composable(Screen.HandReading.route) {
                 HandReadingScreen(
                     onBackClick = {

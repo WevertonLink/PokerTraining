@@ -24,7 +24,7 @@ fun TimerDisplay(
         progress < 0.5 -> Color.Yellow
         else -> colorFromHex(Tokens.Positive)
     }
-    
+
     Box(
         modifier = modifier
             .size(80.dp)

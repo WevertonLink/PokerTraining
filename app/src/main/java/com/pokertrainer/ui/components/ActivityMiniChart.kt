@@ -56,9 +56,9 @@ fun ActivityMiniChart(hands: Int, delta: Int) {
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             // Mini chart representation with bars
             Row(
                 modifier = Modifier.fillMaxWidth(),

@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.pokertrainer.data.TrainingSession
+import com.pokertrainer.data.TrainingModule
 import com.pokertrainer.data.SampleData
 import com.pokertrainer.ui.components.*
 import com.pokertrainer.ui.theme.Tokens
@@ -24,7 +24,7 @@ import com.pokertrainer.ui.theme.backgroundGradient
 import com.pokertrainer.ui.theme.colorFromHex
 
 @Composable
-fun ScheduleScreen(sessions: List<TrainingSession>) {
+fun ScheduleScreen(sessions: List<TrainingModule>) {
     val dates = listOf("Hoje", "Amanhã", "Sex", "Sáb", "Dom")
     var selectedDate by remember { mutableStateOf(0) }
     val scrollState = rememberScrollState()
@@ -58,7 +58,7 @@ fun ScheduleScreen(sessions: List<TrainingSession>) {
 }
 
 @Composable
-fun SessionList(sessions: List<TrainingSession>) {
+fun SessionList(sessions: List<TrainingModule>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(Tokens.ItemSpacing)
     ) {
@@ -69,7 +69,7 @@ fun SessionList(sessions: List<TrainingSession>) {
 }
 
 @Composable
-fun SessionCard(session: TrainingSession) {
+fun SessionCard(session: TrainingModule) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Tokens.CardRadius),

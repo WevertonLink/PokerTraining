@@ -1,6 +1,5 @@
 package com.pokertrainer.ui.components.practice
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,7 +25,7 @@ fun RangeSelector(
     modifier: Modifier = Modifier
 ) {
     val cardValues = listOf("A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2")
-    
+
     Column(modifier = modifier) {
         // Cabeçalho
         Row {
@@ -43,7 +42,7 @@ fun RangeSelector(
                 )
             }
         }
-        
+
         // Matriz de seleção
         cardValues.forEachIndexed { rowIndex, rowValue ->
             Row {
@@ -67,9 +66,9 @@ fun RangeSelector(
                     } else {
                         "$colValue${rowValue}o" // Offsuit
                     }
-                    
+
                     val isSelected = selectedCombos.contains(combo)
-                    
+
                     // Determine background color based on combo type
                     val backgroundColor = when {
                         isSelected -> colorFromHex(Tokens.Primary)
@@ -77,7 +76,7 @@ fun RangeSelector(
                         rowIndex < colIndex -> colorFromHex(Tokens.Surface) // Suited
                         else -> colorFromHex(Tokens.Pill) // Offsuit
                     }
-                    
+
                     Box(
                         modifier = Modifier
                             .weight(1f)

@@ -30,7 +30,13 @@ fun DateChips(
             Box(
                 modifier = Modifier
                     .background(
-                        color = if (isSelected) colorFromHex(Tokens.Primary) else colorFromHex(Tokens.Pill),
+                        color = if (isSelected) {
+                            colorFromHex(Tokens.Primary)
+                        } else {
+                            colorFromHex(
+                                Tokens.Pill
+                            )
+                        },
                         shape = RoundedCornerShape(Tokens.PillRadius)
                     )
                     .clickable { onDateSelected(index) }

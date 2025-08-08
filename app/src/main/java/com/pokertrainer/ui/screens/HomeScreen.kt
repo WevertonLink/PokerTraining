@@ -19,7 +19,7 @@ fun HomeScreen(
     onNavigateToPractice: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,15 +34,15 @@ fun HomeScreen(
             onReviewClick = onNavigateToStats,
             onScannerClick = { /* TODO: Scanner implementation */ }
         )
-        
+
         Spacer(Modifier.height(Tokens.SectionSpacing))
         SectionHeader("Módulos")
         StatGrid()
-        
+
         Spacer(Modifier.height(Tokens.SectionSpacing))
         SectionHeader("Atividade")
         ActivityMiniChart(hands = user.handsSolved, delta = user.weeklyDelta)
-        
+
         // Add some bottom padding for the bottom bar
         Spacer(Modifier.height(100.dp))
     }

@@ -1,37 +1,34 @@
 package com.pokertrainer.domain.usecases
 
-import com.pokertrainer.domain.models.DrillScenario
-import com.pokertrainer.domain.models.TrainingDrill
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.pokertrainer.data.repository.TrainingRepository
 
 class EvaluateDecisionUseCase(
     private val repository: TrainingRepository
 ) {
-    
+
     operator fun invoke(
         userSelection: Set<String>,
         correctRanges: List<String>
     ): DecisionResult {
         val correctSet = correctRanges.toSet()
         val userSet = userSelection
-        
+
         val correctSelections = userSet.intersect(correctSet).size
         val incorrectSelections = userSet.minus(correctSet).size
         val missedSelections = correctSet.minus(userSet).size
-        
+
         val accuracy = if (correctSet.isEmpty()) {
             if (userSet.isEmpty()) 100.0 else 0.0
         } else {
             (correctSelections.toDouble() / correctSet.size) * 100.0
         }
-        
+
         val precision = if (userSet.isEmpty()) {
             0.0
         } else {
             (correctSelections.toDouble() / userSet.size) * 100.0
         }
-        
+
         return DecisionResult(
             accuracy = accuracy,
             precision = precision,
@@ -42,7 +39,7 @@ class EvaluateDecisionUseCase(
             feedback = generateFeedback(accuracy, precision, incorrectSelections, missedSelections)
         )
     }
-    
+
     private fun generateFeedback(
         accuracy: Double,
         precision: Double,

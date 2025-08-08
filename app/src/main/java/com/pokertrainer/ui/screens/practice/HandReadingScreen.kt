@@ -1,11 +1,7 @@
 package com.pokertrainer.ui.screens.practice
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -32,7 +28,7 @@ fun HandReadingScreen(
     var selectedRange by remember { mutableStateOf(setOf<String>()) }
     var timeRemaining by remember { mutableStateOf(20 * 60 * 1000L) } // 20 minutos
     var showFeedback by remember { mutableStateOf(false) }
-    
+
     val scenarios = remember {
         listOf(
             HandReadingScenario(
@@ -58,10 +54,10 @@ fun HandReadingScreen(
             )
         )
     }
-    
+
     val currentScenario = scenarios[currentScenarioIndex]
     val isLastScenario = currentScenarioIndex == scenarios.size - 1
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -75,14 +71,14 @@ fun HandReadingScreen(
             totalScenarios = scenarios.size,
             onBackClick = onBackClick
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Cenário atual
         ScenarioDetailCard(currentScenario)
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Range Selector
         RangeSelector(
             selectedCombos = selectedRange,
@@ -95,9 +91,9 @@ fun HandReadingScreen(
             },
             modifier = Modifier.weight(1f)
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Feedback
         if (showFeedback) {
             HandReadingFeedback(
@@ -128,7 +124,7 @@ fun HandReadingScreen(
                 ) {
                     Text("Limpar", color = colorFromHex(Tokens.Neutral))
                 }
-                
+
                 Button(
                     onClick = { showFeedback = true },
                     modifier = Modifier.weight(1f),
@@ -142,7 +138,7 @@ fun HandReadingScreen(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -175,7 +171,7 @@ private fun HandReadingHeader(
                     tint = Color.White
                 )
             }
-            
+
             Column {
                 Text(
                     text = "Leitura de Mãos",
@@ -190,7 +186,7 @@ private fun HandReadingHeader(
                 )
             }
         }
-        
+
         TimerDisplay(
             timeRemaining = timeRemaining,
             totalTime = 20 * 60 * 1000L
@@ -222,7 +218,7 @@ private fun ScenarioDetailCard(scenario: HandReadingScenario) {
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
-            
+
             Text(
                 text = "Ação do Oponente:",
                 fontSize = 12.sp,
@@ -235,7 +231,7 @@ private fun ScenarioDetailCard(scenario: HandReadingScenario) {
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
-            
+
             Text(
                 text = scenario.question,
                 fontSize = 16.sp,
@@ -256,7 +252,7 @@ private fun HandReadingFeedback(
 ) {
     val accuracy = calculateRangeAccuracy(userRange, correctRange)
     val isGoodRead = accuracy >= 70.0
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Tokens.CardRadius),
@@ -277,17 +273,29 @@ private fun HandReadingFeedback(
                 Icon(
                     imageVector = if (isGoodRead) Icons.Default.CheckCircle else Icons.Default.Psychology,
                     contentDescription = "Resultado",
-                    tint = if (isGoodRead) colorFromHex(Tokens.Positive) else colorFromHex("#FFB800")
+                    tint = if (isGoodRead) {
+                        colorFromHex(Tokens.Positive)
+                    } else {
+                        colorFromHex(
+                            "#FFB800"
+                        )
+                    }
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 Column {
                     Text(
                         text = if (isGoodRead) "Boa leitura!" else "Pode melhorar",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (isGoodRead) colorFromHex(Tokens.Positive) else colorFromHex("#FFB800")
+                        color = if (isGoodRead) {
+                            colorFromHex(Tokens.Positive)
+                        } else {
+                            colorFromHex(
+                                "#FFB800"
+                            )
+                        }
                     )
                     Text(
                         text = "Precisão: ${accuracy.toInt()}%",
@@ -296,9 +304,9 @@ private fun HandReadingFeedback(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(12.dp))
-            
+
             Text(
                 text = "Análise:",
                 fontSize = 14.sp,
@@ -311,7 +319,7 @@ private fun HandReadingFeedback(
                 color = colorFromHex(Tokens.Neutral),
                 modifier = Modifier.padding(bottom = 12.dp)
             )
-            
+
             Text(
                 text = "Range esperado:",
                 fontSize = 12.sp,
@@ -323,9 +331,9 @@ private fun HandReadingFeedback(
                 fontSize = 11.sp,
                 color = colorFromHex(Tokens.Primary)
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Button(
                 onClick = onNext,
                 modifier = Modifier.fillMaxWidth(),
@@ -347,9 +355,9 @@ private fun HandReadingFeedback(
 private fun calculateRangeAccuracy(userRange: List<String>, correctRange: List<String>): Double {
     val userSet = userRange.toSet()
     val correctSet = correctRange.toSet()
-    
+
     val intersection = userSet.intersect(correctSet).size
     val union = userSet.union(correctSet).size
-    
+
     return if (union == 0) 100.0 else (intersection.toDouble() / union.toDouble()) * 100.0
 }

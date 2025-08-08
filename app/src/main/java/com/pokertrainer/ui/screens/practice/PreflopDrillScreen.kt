@@ -121,13 +121,16 @@ fun PreflopDrillScreen(
         Spacer(modifier = Modifier.height(16.dp))
         
         // Feedback (se visível)
-        if (state.showFeedback && state.lastResult != null) {
-            FeedbackCard(
-                result = state.lastResult?,
-                correctRange = state.currentScenario.correctRanges,
-                selectedRange = state.selectedCombos.toList()
-            )
-            Spacer(modifier = Modifier.height(16.dp))
+        if (state.showFeedback) {
+            val lastResult = state.lastResult
+            if (lastResult != null) {
+                FeedbackCard(
+                    result = lastResult,
+                    correctRange = state.currentScenario.correctRanges,
+                    selectedRange = state.selectedCombos.toList()
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
         }
         
         // Botões de ação

@@ -9,9 +9,9 @@ object SampleData {
         handsSolved = 1247,
         weeklyDelta = 89
     )
-    
+
     val sessions = listOf(
-        TrainingSession(
+        TrainingModule(
             id = "1",
             title = "Pre-flop Fundamentals",
             description = "Master opening ranges and 3-bet strategy",
@@ -19,7 +19,7 @@ object SampleData {
             difficulty = "Iniciante",
             isCompleted = false
         ),
-        TrainingSession(
+        TrainingModule(
             id = "2",
             title = "Post-flop C-betting",
             description = "When and how to continuation bet",
@@ -27,7 +27,7 @@ object SampleData {
             difficulty = "Intermediário",
             isCompleted = true
         ),
-        TrainingSession(
+        TrainingModule(
             id = "3",
             title = "Bluff Catching",
             description = "Identify and call light against bluffs",
@@ -36,7 +36,7 @@ object SampleData {
             isCompleted = false
         )
     )
-    
+
     val studyGroups = listOf(
         StudyGroup(
             id = "1",
@@ -51,7 +51,7 @@ object SampleData {
             nextSession = "Amanhã 19:30"
         )
     )
-    
+
     val opponents = listOf(
         Opponent(
             id = "1",
@@ -75,14 +75,14 @@ object SampleData {
             lastPlayed = "3 dias"
         )
     )
-    
+
     val statModules = listOf(
         StatModule("VPIP", "24%", 0.6f, "#7C5CFF"),
         StatModule("PFR", "18%", 0.45f, "#27D17F"),
         StatModule("3-Bet", "8%", 0.32f, "#FF6969"),
         StatModule("AF", "2.1", 0.7f, "#FFB800")
     )
-    
+
     // Novos dados para drills de poker
     val preflopDrills = listOf(
         TrainingDrill(

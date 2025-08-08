@@ -12,8 +12,8 @@ import com.pokertrainer.ui.theme.colorFromHex
 
 @Composable
 fun ProgressIndicator(
-    current: Int, 
-    total: Int, 
+    current: Int,
+    total: Int,
     modifier: Modifier = Modifier
 ) {
     Box(

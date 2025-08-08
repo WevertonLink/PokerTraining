@@ -2,16 +2,16 @@ package com.pokertrainer.domain.usecases
 
 import com.pokertrainer.data.repository.TrainingRepository
 import com.pokertrainer.domain.models.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class GenerateDrillUseCase(
     private val repository: TrainingRepository
 ) {
     suspend operator fun invoke(drillId: Int): TrainingDrill {
-        return repository.getDrillById(drillId) ?: throw DrillNotFoundException("Drill with id $drillId not found")
+        return repository.getDrillById(drillId) ?: throw DrillNotFoundException(
+            "Drill with id $drillId not found"
+        )
     }
-    
+
     suspend fun generateRandomScenario(category: DrillCategory): DrillScenario {
         return when (category) {
             DrillCategory.PREFLOP -> generatePreflopScenario()
@@ -20,11 +20,11 @@ class GenerateDrillUseCase(
             DrillCategory.BANKROLL_MANAGEMENT -> generateBankrollScenario()
         }
     }
-    
+
     private fun generatePreflopScenario(): DrillScenario {
         val position = Position.entries.random()
         val action = ActionType.entries.random()
-        
+
         return DrillScenario(
             position = position,
             action = action,
@@ -32,7 +32,7 @@ class GenerateDrillUseCase(
             description = "Situação ${action.name.lowercase().replace("_", " ")} na posição ${position.name}"
         )
     }
-    
+
     private fun generatePostflopScenario(): DrillScenario {
         // Implementação para cenários pós-flop
         return DrillScenario(
@@ -42,7 +42,7 @@ class GenerateDrillUseCase(
             description = "Cenário pós-flop complexo"
         )
     }
-    
+
     private fun generateHandReadingScenario(): DrillScenario {
         // Implementação para leitura de mãos
         return DrillScenario(
@@ -52,7 +52,7 @@ class GenerateDrillUseCase(
             description = "Identifique o range do oponente"
         )
     }
-    
+
     private fun generateBankrollScenario(): DrillScenario {
         // Implementação para gestão de bankroll
         return DrillScenario(

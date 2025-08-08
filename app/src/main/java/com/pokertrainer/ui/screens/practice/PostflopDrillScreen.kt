@@ -2,8 +2,6 @@ package com.pokertrainer.ui.screens.practice
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,9 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.pokertrainer.ui.components.practice.HandHistoryViewer
-import com.pokertrainer.ui.components.practice.HandHistory
 import com.pokertrainer.ui.components.practice.HandAction
+import com.pokertrainer.ui.components.practice.HandHistory
+import com.pokertrainer.ui.components.practice.HandHistoryViewer
 import com.pokertrainer.ui.components.practice.TimerDisplay
 import com.pokertrainer.ui.theme.Tokens
 import com.pokertrainer.ui.theme.backgroundGradient
@@ -33,7 +31,7 @@ fun PostflopDrillScreen(
     var timeRemaining by remember { mutableStateOf(25 * 60 * 1000L) } // 25 minutos
     var userDecision by remember { mutableStateOf<String?>(null) }
     var showFeedback by remember { mutableStateOf(false) }
-    
+
     val sampleHands = remember {
         listOf(
             HandHistory(
@@ -71,10 +69,10 @@ fun PostflopDrillScreen(
             )
         )
     }
-    
+
     val currentHand = sampleHands[currentHandIndex]
     val isLastHand = currentHandIndex == sampleHands.size - 1
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,17 +87,17 @@ fun PostflopDrillScreen(
             totalHands = sampleHands.size,
             onBackClick = onBackClick
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Hand History Viewer
         HandHistoryViewer(
             handHistory = currentHand,
             modifier = Modifier.weight(1f)
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         // Decision Area
         if (!showFeedback) {
             DecisionButtonsArea(
@@ -124,7 +122,7 @@ fun PostflopDrillScreen(
                 isLastHand = isLastHand
             )
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
@@ -150,7 +148,7 @@ private fun PostflopHeader(
                     tint = Color.White
                 )
             }
-            
+
             Column {
                 Text(
                     text = "Simulação Pós-flop",
@@ -165,7 +163,7 @@ private fun PostflopHeader(
                 )
             }
         }
-        
+
         TimerDisplay(
             timeRemaining = timeRemaining,
             totalTime = 25 * 60 * 1000L
@@ -194,7 +192,7 @@ private fun DecisionButtonsArea(
                 color = Color.White,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-            
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -209,7 +207,7 @@ private fun DecisionButtonsArea(
                 ) {
                     Text("FOLD", color = Color.White)
                 }
-                
+
                 Button(
                     onClick = { onDecision("CALL") },
                     modifier = Modifier.weight(1f),
@@ -220,7 +218,7 @@ private fun DecisionButtonsArea(
                 ) {
                     Text("CALL", color = Color.White)
                 }
-                
+
                 Button(
                     onClick = { onDecision("RAISE") },
                     modifier = Modifier.weight(1f),
@@ -244,7 +242,7 @@ private fun FeedbackArea(
     isLastHand: Boolean
 ) {
     val isCorrect = userDecision in correctDecision
-    
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(Tokens.CardRadius),
@@ -265,36 +263,48 @@ private fun FeedbackArea(
                 Icon(
                     imageVector = if (isCorrect) Icons.Default.CheckCircle else Icons.Default.Cancel,
                     contentDescription = if (isCorrect) "Correto" else "Incorreto",
-                    tint = if (isCorrect) colorFromHex(Tokens.Positive) else colorFromHex(Tokens.Negative)
+                    tint = if (isCorrect) {
+                        colorFromHex(Tokens.Positive)
+                    } else {
+                        colorFromHex(
+                            Tokens.Negative
+                        )
+                    }
                 )
-                
+
                 Spacer(modifier = Modifier.width(8.dp))
-                
+
                 Text(
                     text = if (isCorrect) "Correto!" else "Incorreto",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = if (isCorrect) colorFromHex(Tokens.Positive) else colorFromHex(Tokens.Negative)
+                    color = if (isCorrect) {
+                        colorFromHex(Tokens.Positive)
+                    } else {
+                        colorFromHex(
+                            Tokens.Negative
+                        )
+                    }
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(8.dp))
-            
+
             Text(
                 text = "Sua decisão: $userDecision",
                 fontSize = 14.sp,
                 color = Color.White
             )
-            
+
             Text(
                 text = correctDecision,
                 fontSize = 14.sp,
                 color = colorFromHex(Tokens.Primary),
                 fontWeight = FontWeight.Medium
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             Button(
                 onClick = onNext,
                 modifier = Modifier.fillMaxWidth(),

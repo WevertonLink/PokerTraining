@@ -7,7 +7,7 @@ data class User(
     val weeklyDelta: Int
 )
 
-data class TrainingSession(
+data class TrainingModule(
     val id: String,
     val title: String,
     val description: String,
