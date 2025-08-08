@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">PokerTrainer</string>
+    <string name="bankroll">Bankroll</string>
+    <string name="practice">Praticar</string>
+    <string name="review">Revisão</string>
+    <string name="hand_scanner">Scanner de Mãos</string>
+    <string name="modules">Módulos</string>
+    <string name="activity">Atividade</string>
+    <string name="schedule_trainings">Agendar treinos</string>
+    <string name="sessions_challenges">Sessões/Desafios</string>
+    <string name="study_groups">Grupos de estudo</string>
+    <string name="recent_opponents">Oponentes recentes</string>
+</resources>
