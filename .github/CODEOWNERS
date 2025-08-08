@@ -1,0 +1,7 @@
+# Donos padrão de todo o repositório
+*       @WevertonLink
+
+# Exemplo de granularidade (ajuste quando houver mais pessoas/equipes)
+app/src/**   @WevertonLink
+.github/**   @WevertonLink
+scripts/**   @WevertonLink
