@@ -30,7 +30,9 @@ import com.pokertrainer.ui.theme.colorFromHex
 fun PracticeHomeScreen(
     userName: String = "Alex",
     onDrillClick: (TrainingDrill) -> Unit = {},
-    onCategoryClick: (DrillCategory) -> Unit = {}
+    onCategoryClick: (DrillCategory) -> Unit = {},
+    onPostflopStart: (String) -> Unit = {},
+    onHandReadingStart: () -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -51,6 +53,30 @@ fun PracticeHomeScreen(
         SectionHeader("Categorias de Treino")
         Spacer(modifier = Modifier.height(12.dp))
         DrillCategoriesGrid(onCategoryClick)
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        // Treinos Avançados
+        SectionHeader("Treinos Avançados")
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        // Treino pós-flop
+        ActionCard(
+            title = "Simulação Pós-flop",
+            icon = Icons.Default.Animation,
+            description = "Tome decisões em situações complexas de flop, turn e river",
+            onStart = { onPostflopStart(java.util.UUID.randomUUID().toString()) }
+        )
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        // Leitura de mãos
+        ActionCard(
+            title = "Leitura de Mãos",
+            icon = Icons.Default.Psychology,
+            description = "Desenvolva sua habilidade de identificar ranges oponentes",
+            onStart = onHandReadingStart
+        )
         
         Spacer(modifier = Modifier.height(24.dp))
         
@@ -351,6 +377,62 @@ private fun DifficultyStars(difficulty: Int) {
                 contentDescription = "Estrela ${index + 1}",
                 tint = if (index < difficulty) colorFromHex("#FFB800") else colorFromHex(Tokens.Neutral),
                 modifier = Modifier.size(12.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ActionCard(
+    title: String,
+    icon: ImageVector,
+    description: String,
+    onStart: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onStart() },
+        shape = RoundedCornerShape(Tokens.CardRadius),
+        colors = CardDefaults.cardColors(
+            containerColor = colorFromHex(Tokens.SurfaceElevated)
+        )
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                tint = colorFromHex(Tokens.Primary),
+                modifier = Modifier.size(48.dp)
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+                
+                Spacer(modifier = Modifier.height(4.dp))
+                
+                Text(
+                    text = description,
+                    fontSize = 12.sp,
+                    color = colorFromHex(Tokens.Neutral)
+                )
+            }
+            
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = "Iniciar",
+                tint = colorFromHex(Tokens.Neutral),
+                modifier = Modifier.size(24.dp)
             )
         }
     }

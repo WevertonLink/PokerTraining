@@ -9,4 +9,8 @@ sealed class Screen(val route: String) {
     object PreflopDrill : Screen("preflop_drill/{drillId}") {
         fun createRoute(drillId: Int) = "preflop_drill/$drillId"
     }
+    object PostflopDrill : Screen("postflop_drill/{sessionId}") {
+        fun createRoute(sessionId: String) = "postflop_drill/$sessionId"
+    }
+    object HandReading : Screen("hand_reading")
 }

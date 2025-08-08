@@ -16,6 +16,9 @@ import com.pokertrainer.ui.components.BottomPillBar
 import com.pokertrainer.ui.screens.*
 import com.pokertrainer.ui.screens.practice.PracticeHomeScreen
 import com.pokertrainer.ui.screens.practice.PreflopDrillScreen
+import com.pokertrainer.ui.screens.practice.PostflopDrillScreen
+import com.pokertrainer.ui.screens.practice.HandReadingScreen
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +79,12 @@ fun PokerTrainerApp() {
                     },
                     onCategoryClick = { category ->
                         // Navegação por categoria será implementada posteriormente
+                    },
+                    onPostflopStart = { sessionId ->
+                        navController.navigate(Screen.PostflopDrill.createRoute(sessionId))
+                    },
+                    onHandReadingStart = {
+                        navController.navigate(Screen.HandReading.route)
                     }
                 )
             }
@@ -87,11 +96,39 @@ fun PokerTrainerApp() {
                 )
             ) { backStackEntry ->
                 val drillId = backStackEntry.arguments?.getInt("drillId") ?: 1
-                val drill = SampleData.preflopDrills.find { it.id == drillId }
-                    ?: SampleData.preflopDrills.first()
                 
                 PreflopDrillScreen(
-                    drill = drill,
+                    drillId = drillId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onCompleteClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            
+            composable(
+                route = Screen.PostflopDrill.route,
+                arguments = listOf(
+                    navArgument("sessionId") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val sessionId = backStackEntry.arguments?.getString("sessionId") ?: ""
+                
+                PostflopDrillScreen(
+                    sessionId = sessionId,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onCompleteClick = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            
+            composable(Screen.HandReading.route) {
+                HandReadingScreen(
                     onBackClick = {
                         navController.popBackStack()
                     },
