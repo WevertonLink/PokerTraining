@@ -15,6 +15,8 @@ object Tokens {
     const val Positive = "#27D17F"
     const val Negative = "#FF6969"
     const val Neutral = "#9AA3AE"
+    const val Warning = "#FFB800"
+    const val Error = "#FF6969"
     
     // Typography
     val DisplayXL = 34.sp

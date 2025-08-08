@@ -16,7 +16,10 @@ import com.pokertrainer.ui.theme.backgroundGradient
 fun HomeScreen(
     user: User,
     onNavigateToStats: () -> Unit = {},
-    onNavigateToPractice: () -> Unit = {}
+    onNavigateToPractice: () -> Unit = {},
+    onNavigateToAnalysis: () -> Unit = {},
+    onNavigateToNotifications: () -> Unit = {},
+    onNavigateToTutorials: () -> Unit = {}
 ) {
     val scrollState = rememberScrollState()
 
@@ -27,12 +30,17 @@ fun HomeScreen(
             .background(brush = backgroundGradient())
             .padding(horizontal = Tokens.ScreenPad)
     ) {
-        TopGreetingBar(user.name)
+        TopGreetingBar(
+            name = user.name,
+            unreadNotifications = 3, // TODO: Get from NotificationViewModel
+            onNotificationsClick = onNavigateToNotifications
+        )
         BalanceCard(user.bankroll)
         ActionPills(
             onPracticeClick = onNavigateToPractice,
             onReviewClick = onNavigateToStats,
-            onScannerClick = { /* TODO: Scanner implementation */ }
+            onAnalysisClick = onNavigateToAnalysis,
+            onTutorialsClick = onNavigateToTutorials
         )
 
         Spacer(Modifier.height(Tokens.SectionSpacing))

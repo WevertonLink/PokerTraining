@@ -48,6 +48,15 @@ fun PokerTrainerApp() {
                     },
                     onNavigateToStats = {
                         navController.navigate(Screen.Stats.route)
+                    },
+                    onNavigateToAnalysis = {
+                        navController.navigate(Screen.PerformanceAnalysis.route)
+                    },
+                    onNavigateToNotifications = {
+                        navController.navigate(Screen.Notifications.route)
+                    },
+                    onNavigateToTutorials = {
+                        navController.navigate(Screen.Tutorials.route)
                     }
                 )
             }
@@ -63,6 +72,23 @@ fun PokerTrainerApp() {
             }
             composable(Screen.Training.route) {
                 TrainingScreen(
+                    onBackPressed = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(Screen.Gamification.route) {
+                GamificationScreen()
+            }
+            composable(Screen.Notifications.route) {
+                NotificationScreen(
+                    onBackPressed = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+            composable(Screen.Tutorials.route) {
+                TutorialScreen(
                     onBackPressed = {
                         navController.popBackStack()
                     }
@@ -134,6 +160,10 @@ fun PokerTrainerApp() {
                         navController.popBackStack()
                     }
                 )
+            }
+
+            composable(Screen.PerformanceAnalysis.route) {
+                PerformanceAnalysisScreen()
             }
         }
     }

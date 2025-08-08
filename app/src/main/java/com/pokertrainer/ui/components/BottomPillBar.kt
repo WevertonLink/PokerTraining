@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +23,8 @@ import com.pokertrainer.ui.theme.colorFromHex
 fun BottomPillBar(currentRoute: String?, navController: NavController) {
     val items = listOf(
         Screen.Home to Icons.Default.Home,
-        Screen.Schedule to Icons.Default.CalendarToday
+        Screen.Schedule to Icons.Default.CalendarToday,
+        Screen.Gamification to Icons.Default.EmojiEvents
     )
 
     Card(

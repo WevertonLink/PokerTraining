@@ -1,6 +1,7 @@
 package com.pokertrainer.data
 
 import com.pokertrainer.domain.models.*
+import java.time.LocalDateTime
 
 object SampleData {
     val user = User(
@@ -8,6 +9,155 @@ object SampleData {
         bankroll = 12580.50,
         handsSolved = 1247,
         weeklyDelta = 89
+    )
+
+    // Dados simplificados para análise de performance
+    val sampleAnalysis = PerformanceAnalysis(
+        playerId = "user123",
+        period = AnalysisPeriod.LAST_30_DAYS,
+        lastUpdated = LocalDateTime.now(),
+        overallStats = OverallStats(
+            totalDrillsCompleted = 245,
+            averageAccuracy = 0.78,
+            totalTimeSpent = 85200000L, // 1420 minutos em ms
+            sessionsCompleted = 24,
+            currentStreak = 7,
+            bestStreak = 12,
+            improvementRate = 0.12,
+            rank = PlayerRank.GOLD
+        ),
+        categoryPerformance = mapOf(
+            DrillCategory.PREFLOP to CategoryStats(
+                category = DrillCategory.PREFLOP,
+                accuracy = 0.82,
+                averageTime = 4500L,
+                questionsAnswered = 120,
+                difficultyLevel = 3,
+                masteryLevel = MasteryLevel.ADVANCED,
+                lastPracticed = LocalDateTime.now().minusDays(1)
+            ),
+            DrillCategory.POSTFLOP to CategoryStats(
+                category = DrillCategory.POSTFLOP,
+                accuracy = 0.74,
+                averageTime = 6200L,
+                questionsAnswered = 95,
+                difficultyLevel = 4,
+                masteryLevel = MasteryLevel.INTERMEDIATE,
+                lastPracticed = LocalDateTime.now().minusDays(2)
+            ),
+            DrillCategory.HAND_READING to CategoryStats(
+                category = DrillCategory.HAND_READING,
+                accuracy = 0.67,
+                averageTime = 8100L,
+                questionsAnswered = 30,
+                difficultyLevel = 5,
+                masteryLevel = MasteryLevel.BEGINNER,
+                lastPracticed = LocalDateTime.now().minusDays(5)
+            )
+        ),
+        weaknesses = listOf(
+            WeaknessArea(
+                id = "weak1",
+                category = DrillCategory.HAND_READING,
+                specificArea = "Bluff catching em river",
+                severity = WeaknessSeverity.HIGH,
+                description = "Dificuldade em identificar quando o oponente pode estar blufando no river",
+                suggestedDrills = listOf(1, 2),
+                estimatedTimeToImprove = 15L
+            ),
+            WeaknessArea(
+                id = "weak2",
+                category = DrillCategory.POSTFLOP,
+                specificArea = "C-bet sizing",
+                severity = WeaknessSeverity.MEDIUM,
+                description = "Inconsistência no sizing de continuation bets",
+                suggestedDrills = listOf(3, 4),
+                estimatedTimeToImprove = 8L
+            )
+        ),
+        recommendations = listOf(
+            Recommendation(
+                id = "rec1",
+                type = RecommendationType.DRILL_PRACTICE,
+                title = "Foque em spots de river",
+                description = "Dedique mais tempo estudando situações de river para melhorar sua capacidade de bluff catching",
+                priority = RecommendationPriority.HIGH,
+                estimatedImpact = 0.8,
+                targetCategory = DrillCategory.HAND_READING,
+                actionItems = listOf(
+                    ActionItem(
+                        description = "Complete 20 drills de river play",
+                        drillId = 1,
+                        estimatedTime = 60L
+                    ),
+                    ActionItem(
+                        description = "Revise conceitos de pot odds em river",
+                        drillId = 2,
+                        estimatedTime = 30L
+                    )
+                )
+            ),
+            Recommendation(
+                id = "rec2",
+                type = RecommendationType.STUDY_MATERIAL,
+                title = "Pratique sizing de c-bet",
+                description = "Trabalhe na consistência dos sizings de continuation bet",
+                priority = RecommendationPriority.MEDIUM,
+                estimatedImpact = 0.6,
+                targetCategory = DrillCategory.POSTFLOP,
+                actionItems = listOf(
+                    ActionItem(
+                        description = "Estude diferentes sizes para diferentes boards",
+                        drillId = 3,
+                        estimatedTime = 45L
+                    )
+                )
+            )
+        ),
+        progressTrend = listOf(
+            ProgressPoint(
+                date = LocalDateTime.now().minusDays(30),
+                accuracy = 0.68,
+                category = DrillCategory.PREFLOP,
+                sessionsCompleted = 3
+            ),
+            ProgressPoint(
+                date = LocalDateTime.now().minusDays(25),
+                accuracy = 0.71,
+                category = DrillCategory.PREFLOP,
+                sessionsCompleted = 5
+            ),
+            ProgressPoint(
+                date = LocalDateTime.now().minusDays(20),
+                accuracy = 0.69,
+                category = DrillCategory.PREFLOP,
+                sessionsCompleted = 7
+            ),
+            ProgressPoint(
+                date = LocalDateTime.now().minusDays(15),
+                accuracy = 0.74,
+                category = DrillCategory.PREFLOP,
+                sessionsCompleted = 10
+            ),
+            ProgressPoint(
+                date = LocalDateTime.now().minusDays(10),
+                accuracy = 0.76,
+                category = DrillCategory.PREFLOP,
+                sessionsCompleted = 15
+            ),
+            ProgressPoint(
+                date = LocalDateTime.now().minusDays(5),
+                accuracy = 0.78,
+                category = DrillCategory.PREFLOP,
+                sessionsCompleted = 20
+            ),
+            ProgressPoint(
+                date = LocalDateTime.now(),
+                accuracy = 0.78,
+                category = DrillCategory.PREFLOP,
+                sessionsCompleted = 24
+            )
+        )
     )
 
     val sessions = listOf(

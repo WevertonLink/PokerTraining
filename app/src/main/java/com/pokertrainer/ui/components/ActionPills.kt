@@ -14,12 +14,14 @@ import com.pokertrainer.ui.theme.colorFromHex
 fun ActionPills(
     onPracticeClick: () -> Unit = {},
     onReviewClick: () -> Unit = {},
-    onScannerClick: () -> Unit = {}
+    onAnalysisClick: () -> Unit = {},
+    onTutorialsClick: () -> Unit = {}
 ) {
     val actions = listOf(
         "Praticar" to onPracticeClick,
         "Revisão" to onReviewClick,
-        "Scanner de Mãos" to onScannerClick
+        "Análise" to onAnalysisClick,
+        "Tutoriais" to onTutorialsClick
     )
 
     Row(
