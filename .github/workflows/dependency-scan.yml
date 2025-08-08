@@ -1,0 +1,44 @@
+name: Dependency Vulnerability Scan
+
+on:
+  schedule:
+    - cron: '0 2 * * 1' # Run every Monday at 2 AM
+  workflow_dispatch:
+
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Run dependency vulnerability scan
+      run: ./gradlew dependencyCheckAnalyze --continue || true
+
+    - name: Upload vulnerability report
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: dependency-vulnerability-report
+        path: |
+          app/build/reports/
+          build/reports/
+
+    - name: Check for critical vulnerabilities
+      run: |
+        if find . -name "dependency-check-report.html" -exec grep -l "CRITICAL\|HIGH" {} \; | grep -q .; then
+          echo "::error::Critical or High severity vulnerabilities found"
+          exit 1
+        else
+          echo "✅ No critical vulnerabilities found"
+        fi

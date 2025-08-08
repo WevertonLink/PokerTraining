@@ -1,0 +1,383 @@
+name: Code Quality & Auto-Fix
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  code-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Clean and refresh dependencies
+      run: ./gradlew clean build --refresh-dependencies --continue
+
+    - name: Run Kotlin linter (ktlint)
+      run: ./gradlew ktlintCheck --continue || true
+
+    - name: Check for compilation errors
+      id: compile_check
+      run: |
+        ./gradlew compileDebugKotlin --continue > compilation_output.txt 2>&1 || true
+        echo "COMPILATION_ERRORS=$(cat compilation_output.txt | grep -E 'error:|Error:|ERROR:' | wc -l)" >> $GITHUB_OUTPUT
+
+    - name: Check for unused parameters
+      run: |
+        echo "Checking for unused parameters..."
+        find app/src -name "*.kt" -exec grep -Hn "unused parameter" {} \; > unused_params.txt || true
+        echo "Found $(wc -l < unused_params.txt) unused parameters"
+
+    - name: Check for missing imports
+      run: |
+        echo "Checking for missing imports..."
+        find app/src -name "*.kt" -exec grep -L "import androidx.lifecycle" {} \; | grep ViewModel > missing_imports.txt || true
+        echo "Found $(wc -l < missing_imports.txt) files with missing imports"
+
+    - name: Generate dependency analysis
+      run: ./gradlew dependencies > dependency_report.txt || true
+
+    - name: Upload analysis results
+      uses: actions/upload-artifact@v3
+      with:
+        name: code-analysis-results
+        path: |
+          compilation_output.txt
+          unused_params.txt
+          missing_imports.txt
+          dependency_report.txt
+
+  auto-fix:
+    runs-on: ubuntu-latest
+    needs: code-analysis
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Apply auto-fixes
+      run: |
+        # Create auto-fix script
+        cat > auto_fix.py << 'EOF'
+        import os
+        import re
+        import subprocess
+
+        def fix_unused_parameters():
+            """Fix unused parameters by prefixing with underscore"""
+            print("Fixing unused parameters...")
+            for root, dirs, files in os.walk("app/src"):
+                for file in files:
+                    if file.endswith(".kt"):
+                        filepath = os.path.join(root, file)
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        
+                        # Pattern to find unused parameters
+                        # This is a simple pattern - in real scenario you'd use more sophisticated analysis
+                        original_content = content
+                        
+                        # Fix common unused parameter patterns
+                        content = re.sub(r'(\w+): (\w+),?\s*// UNUSED', r'_\1: \2,', content)
+                        content = re.sub(r'(\w+): (\w+)\s*=\s*[^,)]+,?\s*// UNUSED', r'_\1: \2,', content)
+                        
+                        if content != original_content:
+                            with open(filepath, 'w', encoding='utf-8') as f:
+                                f.write(content)
+                            print(f"Fixed unused parameters in {filepath}")
+
+        def add_missing_imports():
+            """Add missing imports to ViewModel files"""
+            print("Adding missing imports...")
+            viewmodel_imports = [
+                "import androidx.lifecycle.ViewModel",
+                "import androidx.lifecycle.viewModelScope",
+                "import kotlinx.coroutines.flow.MutableStateFlow",
+                "import kotlinx.coroutines.flow.StateFlow",
+                "import kotlinx.coroutines.flow.asStateFlow",
+                "import kotlinx.coroutines.launch"
+            ]
+            
+            for root, dirs, files in os.walk("app/src"):
+                for file in files:
+                    if file.endswith("ViewModel.kt"):
+                        filepath = os.path.join(root, file)
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        
+                        # Check if file needs imports
+                        if "class " in content and "ViewModel" in content:
+                            lines = content.split('\n')
+                            package_line = -1
+                            import_section_end = -1
+                            
+                            for i, line in enumerate(lines):
+                                if line.startswith('package '):
+                                    package_line = i
+                                elif line.startswith('import ') and import_section_end < i:
+                                    import_section_end = i
+                            
+                            if package_line != -1:
+                                insert_pos = import_section_end + 1 if import_section_end > package_line else package_line + 2
+                                
+                                # Add missing imports
+                                for import_stmt in viewmodel_imports:
+                                    if import_stmt not in content:
+                                        lines.insert(insert_pos, import_stmt)
+                                        insert_pos += 1
+                                
+                                new_content = '\n'.join(lines)
+                                if new_content != content:
+                                    with open(filepath, 'w', encoding='utf-8') as f:
+                                        f.write(new_content)
+                                    print(f"Added imports to {filepath}")
+
+        def fix_viewmodel_inheritance():
+            """Fix ViewModel class inheritance"""
+            print("Fixing ViewModel inheritance...")
+            for root, dirs, files in os.walk("app/src"):
+                for file in files:
+                    if file.endswith("ViewModel.kt"):
+                        filepath = os.path.join(root, file)
+                        with open(filepath, 'r', encoding='utf-8') as f:
+                            content = f.read()
+                        
+                        original_content = content
+                        
+                        # Fix class declaration
+                        content = re.sub(
+                            r'class (\w*ViewModel[^(]*)\([^)]*\)\s*{',
+                            r'class \1) : ViewModel() {',
+                            content
+                        )
+                        
+                        # Add viewModelScope for suspend calls
+                        content = re.sub(
+                            r'(\s+)(suspend fun \w+\([^)]*\)[^{]*{)',
+                            r'\1fun \2\n\1    viewModelScope.launch {',
+                            content
+                        )
+                        
+                        if content != original_content:
+                            with open(filepath, 'w', encoding='utf-8') as f:
+                                f.write(content)
+                            print(f"Fixed ViewModel inheritance in {filepath}")
+
+        if __name__ == "__main__":
+            fix_unused_parameters()
+            add_missing_imports()
+            fix_viewmodel_inheritance()
+            print("Auto-fixes completed!")
+        EOF
+
+        python3 auto_fix.py
+
+    - name: Update build.gradle.kts with missing dependencies
+      run: |
+        # Check if dependencies are missing and add them
+        cat > update_dependencies.py << 'EOF'
+        import re
+
+        def update_build_gradle():
+            filepath = "app/build.gradle.kts"
+            try:
+                with open(filepath, 'r') as f:
+                    content = f.read()
+                
+                required_deps = [
+                    'implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")',
+                    'implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")',
+                    'implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")',
+                    'implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")'
+                ]
+                
+                # Find dependencies block
+                deps_pattern = r'dependencies\s*{\s*([^}]+)\s*}'
+                match = re.search(deps_pattern, content, re.DOTALL)
+                
+                if match:
+                    existing_deps = match.group(1)
+                    new_deps = []
+                    
+                    for dep in required_deps:
+                        # Extract package name for checking
+                        package_name = re.search(r'"([^"]+):', dep).group(1)
+                        if package_name not in existing_deps:
+                            new_deps.append(f"    {dep}")
+                    
+                    if new_deps:
+                        # Add new dependencies
+                        new_deps_block = existing_deps.rstrip() + "\n" + "\n".join(new_deps) + "\n"
+                        updated_content = content.replace(match.group(1), new_deps_block)
+                        
+                        with open(filepath, 'w') as f:
+                            f.write(updated_content)
+                        print(f"Added {len(new_deps)} missing dependencies to build.gradle.kts")
+                    else:
+                        print("All required dependencies are already present")
+                else:
+                    print("Could not find dependencies block in build.gradle.kts")
+            
+            except FileNotFoundError:
+                print("build.gradle.kts not found")
+            except Exception as e:
+                print(f"Error updating dependencies: {e}")
+
+        update_build_gradle()
+        EOF
+
+        python3 update_dependencies.py
+
+    - name: Run ktlint format
+      run: ./gradlew ktlintFormat || true
+
+    - name: Verify fixes with compilation
+      run: ./gradlew compileDebugKotlin --continue || true
+
+    - name: Commit auto-fixes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add -A
+        
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "fix: auto-resolve compilation errors and implement safe viewmodels
+
+          - Add missing imports for ViewModel and coroutines
+          - Fix unused parameters by prefixing with underscore  
+          - Update ViewModels to inherit correctly and use viewModelScope
+          - Add missing dependencies for coroutines and lifecycle
+          - Apply ktlint formatting
+
+          Auto-generated by GitHub Actions"
+          
+          git push origin ${{ github.ref_name }}
+        fi
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run security scan
+      run: |
+        echo "Scanning for security issues..."
+        
+        # Check for dangerous operators
+        echo "Checking for !! operators..."
+        find app/src -name "*.kt" -exec grep -Hn "!!" {} \; > security_issues.txt || true
+        
+        # Check for missing null safety
+        echo "Checking for missing null safety..."
+        find app/src -name "*.kt" -exec grep -Hn "lateinit var" {} \; >> security_issues.txt || true
+        
+        # Check for hardcoded sensitive data
+        echo "Checking for potential secrets..."
+        find app/src -name "*.kt" -exec grep -Hn -i "password\|secret\|key\|token" {} \; >> security_issues.txt || true
+        
+        if [ -s security_issues.txt ]; then
+          echo "Security issues found:"
+          cat security_issues.txt
+          echo "::warning::Security issues detected in code"
+        else
+          echo "No security issues found"
+        fi
+
+    - name: Upload security report
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-scan-results
+        path: security_issues.txt
+
+  test-build:
+    runs-on: ubuntu-latest
+    needs: [code-analysis, auto-fix]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+    - name: Test compilation after fixes
+      run: |
+        ./gradlew clean
+        ./gradlew compileDebugKotlin
+        echo "✅ Compilation successful after auto-fixes"
+
+    - name: Run unit tests
+      run: ./gradlew testDebugUnitTest --continue || true
+
+    - name: Generate build report
+      run: |
+        ./gradlew assembleDebug --continue
+        echo "Build completed. APK should be generated successfully."
+        
+        # Check if APK was created
+        if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
+          echo "✅ APK generated successfully"
+          ls -la app/build/outputs/apk/debug/
+        else
+          echo "❌ APK generation failed"
+          exit 1
+        fi

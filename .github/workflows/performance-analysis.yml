@@ -1,0 +1,122 @@
+name: Performance & Memory Analysis
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/src/**/*.kt'
+  workflow_dispatch:
+
+jobs:
+  performance-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Analyze code performance
+      run: |
+        echo "Analyzing performance patterns..."
+        
+        # Check for memory leaks patterns
+        echo "🔍 Checking for potential memory leaks..."
+        find app/src -name "*.kt" -exec grep -Hn "static.*Context\|getApplicationContext()" {} \; > memory_issues.txt || true
+        
+        # Check for inefficient patterns
+        echo "🔍 Checking for inefficient patterns..."
+        find app/src -name "*.kt" -exec grep -Hn "findViewById\|++\|--" {} \; > performance_issues.txt || true
+        
+        # Check for proper coroutine usage
+        echo "🔍 Checking coroutine usage..."
+        find app/src -name "*.kt" -exec grep -Hn "GlobalScope\|runBlocking" {} \; > coroutine_issues.txt || true
+        
+        # Check for proper state management
+        echo "🔍 Checking state management..."
+        find app/src -name "*.kt" -exec grep -Hn "var.*State\|mutable.*=" {} \; > state_issues.txt || true
+
+    - name: Generate performance report
+      run: |
+        echo "# Performance Analysis Report" > performance_report.md
+        echo "Generated on: $(date)" >> performance_report.md
+        echo "" >> performance_report.md
+        
+        echo "## Memory Issues" >> performance_report.md
+        if [ -s memory_issues.txt ]; then
+          echo "⚠️ Potential memory leaks found:" >> performance_report.md
+          echo '```' >> performance_report.md
+          head -20 memory_issues.txt >> performance_report.md
+          echo '```' >> performance_report.md
+        else
+          echo "✅ No memory issues detected" >> performance_report.md
+        fi
+        echo "" >> performance_report.md
+        
+        echo "## Performance Issues" >> performance_report.md
+        if [ -s performance_issues.txt ]; then
+          echo "⚠️ Performance issues found:" >> performance_report.md
+          echo '```' >> performance_report.md
+          head -20 performance_issues.txt >> performance_report.md
+          echo '```' >> performance_report.md
+        else
+          echo "✅ No performance issues detected" >> performance_report.md
+        fi
+        echo "" >> performance_report.md
+        
+        echo "## Coroutine Issues" >> performance_report.md
+        if [ -s coroutine_issues.txt ]; then
+          echo "⚠️ Coroutine anti-patterns found:" >> performance_report.md
+          echo '```' >> performance_report.md
+          head -20 coroutine_issues.txt >> performance_report.md
+          echo '```' >> performance_report.md
+        else
+          echo "✅ No coroutine issues detected" >> performance_report.md
+        fi
+        echo "" >> performance_report.md
+        
+        echo "## State Management Issues" >> performance_report.md
+        if [ -s state_issues.txt ]; then
+          echo "⚠️ State management issues found:" >> performance_report.md
+          echo '```' >> performance_report.md
+          head -20 state_issues.txt >> performance_report.md
+          echo '```' >> performance_report.md
+        else
+          echo "✅ No state management issues detected" >> performance_report.md
+        fi
+        
+        cat performance_report.md
+
+    - name: Upload performance analysis
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-analysis
+        path: |
+          performance_report.md
+          memory_issues.txt
+          performance_issues.txt
+          coroutine_issues.txt
+          state_issues.txt
+
+    - name: Comment on PR with performance analysis
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('performance_report.md', 'utf8');
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `## 🚀 Performance Analysis Report\n\n${report}`
+          });

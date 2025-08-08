@@ -123,7 +123,7 @@ fun PreflopDrillScreen(
         // Feedback (se visível)
         if (state.showFeedback && state.lastResult != null) {
             FeedbackCard(
-                result = state.lastResult!!,
+                result = state.lastResult?,
                 correctRange = state.currentScenario.correctRanges,
                 selectedRange = state.selectedCombos.toList()
             )

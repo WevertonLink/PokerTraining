@@ -2,8 +2,12 @@ package com.pokertrainer.domain.usecases
 
 import com.pokertrainer.domain.models.DrillScenario
 import com.pokertrainer.domain.models.TrainingDrill
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class EvaluateDecisionUseCase {
+class EvaluateDecisionUseCase(
+    private val repository: TrainingRepository
+) {
     
     operator fun invoke(
         userSelection: Set<String>,
